@@ -68,6 +68,15 @@ Read [the reproduction guide](docs/reproduction.md) for the code map, dependency
 workflows, release caveats, and validation status. Further data-loading examples are in
 [`data_loading_examples.py`](data_loading_examples.py).
 
+## Neurobiology course project
+
+The team selected D3 + D8 from the [broader project options report](docs/neurobiology_project_options_draft.md).
+The [dedicated decision-speed plan](docs/d3_d8_decision_speed_plan.md) combines pre-stimulus and early
+stimulus activity in a VISp–MOs comparison, with five provisional lab-matched session pairs, a shared
+analysis protocol, three-person responsibilities, and a 28–36 person-hour budget. It is a plan;
+the project analyses have not been run. The Chinese companion Word document is shared separately;
+DOCX files are ignored by Git.
+
 ## Analysis environments
 
 Groups are opt-in. Include the same groups with both `uv sync` and `uv run`; a later sync/run can
