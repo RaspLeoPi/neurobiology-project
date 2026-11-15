@@ -6,13 +6,28 @@ The pipelines used for the processing of the entire dataset are located in the `
 
 ## Installation
 
-There are several steps that are necessary to get the code in this section of the repo to run. All of these installation instructions should be run within the parent IBL environment specified [at the top of this repository](https://github.com/int-brain-lab/paper-brain-wide-map#readme).
+From the repository root, install the locked encoding and notebook dependencies:
 
-First and foremost the user must install the `neurencoding` package upon which the models are built. This can be done by simply running `pip install neurencoding` within the IBL environment. Users must also install `jupyter` in order to be able to run the example notebook contained in `scripts/`.
+```sh
+uv sync --locked --group encoding --group notebook
+uv run --locked --group encoding --group notebook jupyter lab brainwidemap/encoding/scripts/fit_example_session.ipynb
+```
 
-Users must also adjust the paths for storage in the `paper-brain-wide-map/brainwidemap/encoding/params.py` file. These are the paths where the code will store cached results, `GLM_CACHE`, and the fit results for the brain-wide map, `GLM_FIT_PATH`. As long as the top-level directory that is specified already exists the code will handle subfolder generation etc.
+Select `.venv/bin/python` as the notebook kernel. The `encoding` group provides `neurencoding`
+and regression tools; the `notebook` group provides JupyterLab and ipykernel. Repeat selected groups
+on `uv run` so that the correct environment is retained. This legacy example has not been validated
+by the new [single-cell reproduction notebook](../../notebooks/reproduce_bwm.ipynb).
 
-If you would like to run the full pipeline for data analyses, there are additional required packages and steps, as specified in the [pipelines section](#pipelines) of this document.
+Before executing any data-loading cells, run the proxy-disabling setup in the
+[root README](../../README.md#python-data-fetching-without-proxies) **before** imports. Users must also
+adjust `GLM_CACHE` and `GLM_FIT_PATH` in `params.py` to existing storage roots before using scripts
+that cache or save fits.
+
+For the full pipeline, additionally select `--group cluster`. SLURM, Singularity/Apptainer,
+cluster paths, and the legacy container environment need separate configuration; uv supplies the
+Python dependencies but does not rebuild or validate those images. `environment.yaml` and the
+Dockerfile are preserved as legacy cluster resources. See the
+[reproduction guide](../../docs/reproduction.md) for known aggregate and figure-script blockers.
 
 ## Fitting a single session
 
@@ -30,7 +45,10 @@ The `Dockerfile`, found in this folder, specifies the docker image used to run t
 
 Be warned that the image is quite large due to the heavy dependencies of `iblenv`, often reaching 3GB. This is because it is a swiss-army-knife container that also includes `pytorch` and CUDA. In the future I will likely upload a pared-down version built on simple ubuntu, but even that will still be large because of the python libraries.
 
-Users will also have to install the `dask`, `distributed`, and `dask-jobqueue` packages for the SLURM pipelines to work properly.
+Install the cluster Python dependencies from the repository root with
+`uv sync --locked --group encoding --group cluster`. The existing pipeline scripts still submit
+container-based jobs; adapt their interpreter/container paths rather than assuming that the uv
+virtual environment is used inside the legacy image.
 
 ### Scripts
 

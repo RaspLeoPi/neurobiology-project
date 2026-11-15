@@ -2,15 +2,26 @@
 
 ## Installation
 
-Follow the instruction [at the top of this repository](https://github.com/int-brain-lab/paper-brain-wide-map#readme) 
-to create the base environment. On top of that environment, install behavior_models and openturns for the decoding analysis specifically:
+From the repository root, install the locked decoding dependencies:
 
+```sh
+uv sync --locked --group decoding
+uv run --locked --group decoding python brainwidemap/decoding/decoding_example_script.py
 ```
-git clone https://github.com/int-brain-lab/behavior_models.git
-cd behavior_models
-pip install -e .
-pip install openturns
-```
+
+The group includes a pinned legacy `behavior_models` revision, OpenTURNS, and CPU PyTorch on Linux
+x86_64. For notebook exploration, add `--group notebook` to the command. Repeat group selections
+on both `uv sync` and `uv run` to keep the intended packages installed.
+
+Before Python data fetching, run the proxy-disabling setup in the [root README](../../README.md#python-data-fetching-without-proxies)
+before importing ONE or analysis modules. Start with the
+[reproduction notebook](../../notebooks/reproduce_bwm.ipynb) for the code map and a smaller single-cell
+example. The decoding example and full pipeline are separate validation tasks.
+
+The SLURM recipes below retain the original cluster layout. Adapt their paths, job limits, and Python
+launch commands to your cluster; dependency installation does not configure SLURM. The optional
+inter-individual model path requires external `braindelphi` artifacts. See the
+[reproduction guide](../../docs/reproduction.md) for release and figure-production caveats.
 
 ## Introduction
 
@@ -54,7 +65,7 @@ Be careful not to do this with too many jobs so as to not overload the server.  
 (see `N_PARA` and `para_index` in script) which is not too many. Submit these jobs using 
 
 ```
-sbatch 00_slurm_data_caching.py
+sbatch 00_slurm_data_caching.sh
 ```
 
 ## Generate session dataframe
@@ -92,7 +103,7 @@ by the rest of the pipeline. This is done by `03_generate_imposter_df.py`. This 
 nevertheless, can be summited to a slurm cluster using
 
 ```
-sbatch 03_slurm_generate_imposter_df.py
+sbatch 03_slurm_generate_imposter_df.sh
 ```
 
 ## Decoding sessions
@@ -138,10 +149,10 @@ files are saved and change if necessary.
 Did any decoding jobs cancel (e.g. due to time limit) or did any jobs contain regression convergence 
 errors? This information is in the slurm error files.  Running 
 ```
-python 03b_check_convergence.py job_name
+uv run --locked --group decoding python brainwidemap/decoding/04b_check_convergence.py job_name
 ```
-where job_name is the error file prefix used in the previous step, will read all of these files and list 
-the cancellations or convergence error warnings in the command line.  Error files are found by matching the
+Run that command from the repository root. `job_name` is the error-file prefix used in the previous
+step; the script reads matching files and lists cancellations or convergence warnings.  Error files are found by matching the
 regex `job_name+".*err"`.  If there are cancellations, read the corresponding error/output files and see 
 why.  If it is due to time, simply repeat the previous step -- completed session/regions will be skipped 
 and time will be used on the remaining session/regions.  This is typically necessary for wheel-speed 

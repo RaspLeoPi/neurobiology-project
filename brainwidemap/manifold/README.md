@@ -1,23 +1,39 @@
-The script ```state_space_bwm.py``` is used to compute PETHs and subsequent manifold analysis. 
-Data processing and plotting both are implemented by this single script.
+# Population trajectories and manifold analysis
 
-To compute the results, first PETHs are saved for all BWM sessions in a subfolder of the local flatiron folder.
-This can be done for different task variables (binary splits of trials) in parallel, or in sequence as by this command in an ipython session:
+From the repository root, install the locked dependencies:
 
-This analysis requires some extra dependencies, which can be installed by running:
-`pip install -r ./brainwidemap/manifold/requirements.txt`
-
-```python:
-run state_space_bwm.py
-for split in align:  # you can run these splits on different cores, then it's 3h 
-    get_all_d_vars(split)
-    d_var_stacked(split)
+```sh
+uv sync --locked --group manifold
+uv run --locked --group manifold ipython
 ```
 
-The results are saved in an extra results folder on the local flatiron folder. ```get_all_d_vars(split)``` will download, bin and save PETHs as well as grouped distance metrics for all BWM insertions in sequence (3 h per split to compute). ```d_var_stacked(split)``` combines results across insertions and computes other final results for plotting, such as p-values (< 1 min to compute per split).  
+The uv group declares the imports used by `state_space_bwm.py`. The older `requirements.txt` in this
+folder is retained for reference; it includes unrelated/misnamed packages and is not used by uv.
+See the [root installation instructions](../../README.md) and
+[reproduction notebook](../../notebooks/reproduce_bwm.ipynb) for a smaller runnable example.
 
-They can then be plotted by running:
+**Before importing the analysis module**, run the proxy-disabling setup from the
+[root README](../../README.md#python-data-fetching-without-proxies). Importing this module itself
+creates ONE/atlas objects and calls `bwm_units()`. The current aggregate default has no trials
+checksum entry, so reconcile the historical aggregate release before importing/running the full
+analysis. See the [reproduction guide](../../docs/reproduction.md#moving-from-an-example-to-full-results).
+The commands below describe the existing pipeline; they are not an end-to-end validated recipe yet.
 
-```python:
-plot_all()
+After resolving those prerequisites, from the configured IPython session:
+
+```python
+from brainwidemap.manifold import state_space_bwm as manifold
+
+for split in ("stim", "choice", "fback"):
+    manifold.get_all_d_vars(split)
+    manifold.d_var_stacked(split)
+
+manifold.plot_all()
 ```
+
+`get_all_d_vars` downloads processed recordings, computes per-insertion PETHs and distance metrics,
+and saves them under `one.cache_dir/bwm_res/manifold/res`. `d_var_stacked` combines insertions and
+computes final regional results, including p-values. Plotting consumes those cached outputs.
+The upstream estimate was about three hours per split for per-insertion computation and under a
+minute for stacking; these are historical estimates, not measurements of the locked environment.
+For published figure assembly, additional pooled results and external figure tools are required.

@@ -1,3 +1,11 @@
+# Disable proxies before importing network-capable data loaders.
+import os
+
+for key in ("HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY", "http_proxy", "https_proxy", "all_proxy"):
+    os.environ.pop(key, None)
+os.environ["NO_PROXY"] = "*"
+os.environ["no_proxy"] = "*"
+
 import numpy as np
 from one.api import ONE
 from brainbox.io.one import SessionLoader
@@ -12,8 +20,8 @@ Load data for a single session from the released data set
 """
 # Instantiate ONE
 # If you DON'T want to download any new data, and just use previously cached data, set mode to 'local'
-one = ONE(base_url='https://openalyx.internationalbrainlab.org', password='international')
-# one = ONE(base_url='https://openalyx.internationalbrainlab.org', password='international', mode='local')
+one = ONE(base_url='https://openalyx.internationalbrainlab.org', username='intbrainlab', password='international')
+# one = ONE(base_url='https://openalyx.internationalbrainlab.org', username='intbrainlab', password='international', mode='local')
 
 
 # Get the dataframe of all released brainwide map sessions and probe insertions, use frozen query
@@ -58,11 +66,14 @@ body = sess_loader.motion_energy['rightCamera']
 Example 2:
 ==========
 Generate the table of all neurons, regions, probes and sessions used in the BWM paper analyses
+
+Historical workflow: reconcile the aggregate release first. The current default
+2026_Q2 tag has no trials checksum entry; see docs/reproduction.md.
 """
 
 # Instantiate ONE, same as example 1
-one = ONE(base_url='https://openalyx.internationalbrainlab.org', password='international')
-# one = ONE(base_url='https://openalyx.internationalbrainlab.org', password='international', mode='local')
+one = ONE(base_url='https://openalyx.internationalbrainlab.org', username='intbrainlab', password='international')
+# one = ONE(base_url='https://openalyx.internationalbrainlab.org', username='intbrainlab', password='international', mode='local')
 
 # The bwm_units function downloads the relevant data tables and takes care of the filtering. The input parameters
 # shown are the default values, which are used in the paper, but you can change them to suit your needs.
@@ -82,7 +93,7 @@ Example 3:
 Download the 2026_Q2_IBL_et_al_BWM aggregate tables including waveforms and ACGs
 """
 
-one = ONE(base_url='https://openalyx.internationalbrainlab.org', password='international')
+one = ONE(base_url='https://openalyx.internationalbrainlab.org', username='intbrainlab', password='international')
 TAG = '2026_Q2_IBL_et_al_BWM'
 
 # clusters.pqt: one row per unit with QC metrics, brain region, etc.
