@@ -1,7 +1,9 @@
-# Brain-wide map reproduction
+# Neurobiology team project: brain-wide map
 
-This personal fork of [IBL's analysis repository](https://github.com/int-brain-lab/paper-brain-wide-map)
-adds a uv-managed environment and a guided route into reproducing the main paper:
+This repository supports a **three-member team's project for the Neurobiology course**, combining
+paper reproduction with a D3 + D8 study of decision-speed signals in VISp and MOs.
+It is a personal fork of [IBL's analysis repository](https://github.com/int-brain-lab/paper-brain-wide-map),
+with a uv-managed environment and a guided route into reproducing the main paper:
 
 International Brain Laboratory, Angelaki, D., Benson, B. et al. **A brain-wide map of neural activity
 during complex behaviour.** Nature 645, 177–191 (2025).

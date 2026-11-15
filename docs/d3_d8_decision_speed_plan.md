@@ -2,6 +2,8 @@
 
 Dedicated Neurobiology course project plan · 15 November 2026 · three students
 
+This fork is the shared repository for our **three-member Neurobiology course project**, combining paper reproduction with the D3 + D8 decision-speed study described here.
+
 **Status: protocol and metadata feasibility assessment only.** No neural feature extraction, model fitting, hypothesis testing, or new spike downloads have been performed for this plan. The broader [project options report](neurobiology_project_options_draft.md) is retained unchanged. Its original D3 and D8 ideas are combined here with a larger, explicitly budgeted regional comparison. The Chinese companion is `docs/d3_d8_decision_speed_plan_zh.docx`, distributed separately from Git.
 
 ## 1. Research question and scope
